@@ -326,11 +326,17 @@ function placeTower(type,col,row){
   const x=OX+(col+0.5)*CELL, z=OZ+(row+0.5)*CELL;
 
   const grp=new THREE.Group();
-  const base=new THREE.Mesh(GEO.tBase,MAT.base);base.position.y=0.19;grp.add(base);
-  const body=new THREE.Mesh(GEO.tBody,new THREE.MeshLambertMaterial({color:def.col2}));body.position.y=0.97;grp.add(body);
-  const topM=new THREE.Mesh(GEO.tTop,new THREE.MeshLambertMaterial({color:def.col,emissive:new THREE.Color(def.col).multiplyScalar(0.25)}));topM.position.y=1.85;grp.add(topM);
-  const bar=new THREE.Mesh(GEO.barrel,new THREE.MeshLambertMaterial({color:0x222222}));
-  bar.rotation.x=Math.PI/2;bar.position.set(0,1.85,0.72);grp.add(bar);
+  if(def.design){
+    // Community tower — rebuild from hub 3D design
+    buildDesignMesh(grp,def.design);
+  } else {
+    // Standard built-in tower geometry
+    const base=new THREE.Mesh(GEO.tBase,MAT.base);base.position.y=0.19;grp.add(base);
+    const body=new THREE.Mesh(GEO.tBody,new THREE.MeshLambertMaterial({color:def.col2}));body.position.y=0.97;grp.add(body);
+    const topM=new THREE.Mesh(GEO.tTop,new THREE.MeshLambertMaterial({color:def.col,emissive:new THREE.Color(def.col).multiplyScalar(0.25)}));topM.position.y=1.85;grp.add(topM);
+    const bar=new THREE.Mesh(GEO.barrel,new THREE.MeshLambertMaterial({color:0x222222}));
+    bar.rotation.x=Math.PI/2;bar.position.set(0,1.85,0.72);grp.add(bar);
+  }
 
   grp.position.set(x,0,z);grp.castShadow=true;scene.add(grp);
   towers.push({ttype:type,col,row,cellKey:key,x,z,mesh:grp,
@@ -723,6 +729,64 @@ document.getElementById('sMaxWave').textContent=WAVES.length;
 // ─────────────────────────────────────────────────────────────────────────────
 // COMMUNITY TOWERS — loaded from hub localStorage
 // ─────────────────────────────────────────────────────────────────────────────
+function hc(hex){return parseInt((hex||'#888888').replace('#',''),16);}
+
+function buildDesignMesh(grp,ds){
+  // Reconstruct a 3D tower from hub design data
+  const bsW=ds.base.w||1, bdH=ds.body.h||1, bdW=ds.body.w||1;
+  const tpS=ds.top.s||1,  tpG=ds.top.g||0.3, gnL=ds.gun.l||1;
+
+  // Base
+  let bGeo;
+  switch(ds.base.shape){
+    case 'box': bGeo=new THREE.BoxGeometry(2.2*bsW,0.35,2.2*bsW);break;
+    case 'hex': bGeo=new THREE.CylinderGeometry(1.0*bsW,1.25*bsW,0.35,6);break;
+    default:    bGeo=new THREE.CylinderGeometry(1.05*bsW,1.3*bsW,0.35,8);
+  }
+  const base=new THREE.Mesh(bGeo,new THREE.MeshLambertMaterial({color:hc(ds.base.color)}));
+  base.position.y=0.175;grp.add(base);
+
+  // Body
+  const bodyH=1.55*bdH;let bodyGeo;
+  switch(ds.body.shape){
+    case 'square': bodyGeo=new THREE.BoxGeometry(1.2*bdW,bodyH,1.2*bdW);break;
+    case 'spire':  bodyGeo=new THREE.CylinderGeometry(0.28*bdW,0.6*bdW,bodyH*1.3,8);break;
+    case 'hex':    bodyGeo=new THREE.CylinderGeometry(0.58*bdW,0.72*bdW,bodyH,6);break;
+    case 'oct':    bodyGeo=new THREE.CylinderGeometry(0.58*bdW,0.72*bdW,bodyH,8);break;
+    default:       bodyGeo=new THREE.CylinderGeometry(0.55*bdW,0.7*bdW,bodyH,8);
+  }
+  const body=new THREE.Mesh(bodyGeo,new THREE.MeshLambertMaterial({color:hc(ds.body.color)}));
+  body.position.y=0.35+bodyH/2;grp.add(body);
+  const topY=0.35+bodyH;
+
+  // Top
+  let topGeo;
+  switch(ds.top.shape){
+    case 'cone':    topGeo=new THREE.ConeGeometry(0.65*tpS,1.2*tpS,8);break;
+    case 'disc':    topGeo=new THREE.CylinderGeometry(0.9*tpS,0.75*tpS,0.25,8);break;
+    case 'crystal': topGeo=new THREE.OctahedronGeometry(0.65*tpS,0);break;
+    case 'box':     topGeo=new THREE.BoxGeometry(1.1*tpS,0.9*tpS,1.1*tpS);break;
+    case 'spike':   topGeo=new THREE.ConeGeometry(0.35*tpS,1.8*tpS,6);break;
+    default:        topGeo=new THREE.SphereGeometry(0.65*tpS,9,7);
+  }
+  const offsets={sphere:0.65,cone:0.6,disc:0.12,crystal:0,box:0.45,spike:0.9};
+  const topCol=hc(ds.top.color);
+  const top=new THREE.Mesh(topGeo,new THREE.MeshLambertMaterial({color:topCol,emissive:new THREE.Color(topCol).multiplyScalar(tpG)}));
+  top.position.y=topY+(offsets[ds.top.shape]||0.65)*tpS;grp.add(top);
+
+  // Gun
+  if(ds.gun.show){
+    const gMat=new THREE.MeshLambertMaterial({color:hc(ds.gun.color)});
+    const addBarrel=(ox,oy)=>{
+      const b=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.12,0.9*gnL,6),gMat);
+      b.rotation.x=Math.PI/2;b.position.set(ox,topY+oy,0.65);grp.add(b);
+    };
+    if(ds.gun.style==='double'){addBarrel(-0.22,-0.1);addBarrel(0.22,-0.1);}
+    else if(ds.gun.style==='triple'){addBarrel(0,0.1);addBarrel(-0.28,-0.15);addBarrel(0.28,-0.15);}
+    else addBarrel(0,0);
+  }
+}
+
 function loadCommunityTowers(){
   let active=[];
   try{active=JSON.parse(localStorage.getItem('hub_active_towers')||'[]');}catch{}
@@ -730,24 +794,20 @@ function loadCommunityTowers(){
 
   const toolbar=document.getElementById('toolbar');
   const divider=document.createElement('div');
-  divider.style.cssText='width:100%;text-align:center;font-size:10px;color:#444;letter-spacing:2px;margin:0 8px;white-space:nowrap;';
-  divider.textContent='── COMMUNITY ──';
-  toolbar.insertBefore(divider,toolbar.firstChild);
+  divider.style.cssText='width:2px;height:60px;background:#1a1a2a;margin:0 4px;';
+  toolbar.appendChild(divider);
 
   active.forEach(t=>{
-    // Register in TOWER_DEFS so placeTower can find it
     TOWER_DEFS[t.id]={
       name:t.name,cost:t.cost,range:t.range,dmg:t.dmg,rate:t.rate,spd:18,
-      col:parseInt(t.color.replace('#',''),16),
-      col2:parseInt(t.col2.replace('#',''),16),
-      aoe:t.aoe||0,slow:t.slow||0
+      col:hc(t.color||'#4488ff'),col2:hc(t.col2||'#1133aa'),
+      aoe:t.aoe||0,slow:t.slow||0,design:t.design||null
     };
-    // Add button to toolbar
     const btn=document.createElement('div');
     btn.className='tbtn';btn.id='btn_'+t.id;
-    btn.innerHTML=`<span class="ico">${t.icon}</span><div>${t.name}</div><div class="cost">$${t.cost}</div><div class="rng">✨</div>`;
+    btn.innerHTML=`<span class="ico">${t.icon}</span><div style="max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${t.name}</div><div class="cost">$${t.cost}</div><div class="rng">✨</div>`;
     btn.onclick=()=>selectType(t.id);
-    toolbar.insertBefore(btn,divider.nextSibling);
+    toolbar.appendChild(btn);
   });
 }
 loadCommunityTowers();

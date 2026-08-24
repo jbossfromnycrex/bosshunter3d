@@ -6,255 +6,359 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:#0a0a12;min-height:100vh;font-family:'Segoe UI',sans-serif;color:#fff;overflow-x:hidden;}
-
-/* Stars */
 .stars{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;}
 .star{position:absolute;background:#fff;border-radius:50%;animation:twinkle linear infinite;}
-@keyframes twinkle{0%,100%{opacity:.15}50%{opacity:.9}}
+@keyframes twinkle{0%,100%{opacity:.12}50%{opacity:.9}}
+.wrap{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:24px 16px 60px;}
 
-.wrap{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:24px 16px 60px;}
-
-/* ── PLAYER BAR ── */
-#playerBar{
-  display:flex;align-items:center;gap:14px;
-  background:rgba(255,255,255,0.04);border:1px solid #282838;
-  border-radius:14px;padding:14px 20px;margin-bottom:28px;
-}
-#avatar{width:44px;height:44px;border-radius:50%;border:2px solid #555;
-  display:flex;align-items:center;justify-content:center;font-size:22px;
-  cursor:pointer;flex-shrink:0;}
+/* PLAYER BAR */
+#playerBar{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);
+  border:1px solid #1e1e2e;border-radius:14px;padding:14px 20px;margin-bottom:28px;}
+#avatar{width:44px;height:44px;border-radius:50%;border:2px solid #555;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:22px;}
 #playerName{font-size:18px;font-weight:bold;}
-#playerSub{font-size:12px;color:#666;margin-top:2px;}
+#playerSub{font-size:12px;color:#555;margin-top:2px;}
 #changeNameBtn{margin-left:auto;padding:7px 14px;font-size:12px;border-radius:8px;
-  border:1px solid #444;background:transparent;color:#aaa;cursor:pointer;}
+  border:1px solid #333;background:transparent;color:#888;cursor:pointer;}
 #changeNameBtn:hover{background:#1a1a2a;color:#fff;}
 
-/* ── GAME CARDS ── */
-.cards{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:36px;}
-.card{flex:1;min-width:220px;border-radius:16px;border:2px solid #222;background:#0e0e1c;
-  overflow:hidden;cursor:pointer;text-decoration:none;color:#fff;transition:all .16s;display:block;}
+/* GAME CARDS */
+.cards{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:36px;}
+.card{flex:1;min-width:200px;border-radius:16px;border:2px solid #1a1a2a;background:#0e0e1c;
+  overflow:hidden;text-decoration:none;color:#fff;transition:all .16s;display:block;}
 .card:hover{transform:translateY(-6px);box-shadow:0 18px 44px rgba(0,0,0,0.5);}
-.card-banner{height:120px;display:flex;align-items:center;justify-content:center;font-size:58px;position:relative;}
+.card-banner{height:110px;display:flex;align-items:center;justify-content:center;font-size:54px;}
 .bh .card-banner{background:linear-gradient(135deg,#1a0800,#3a1000);}
 .bh:hover{border-color:#ff6600;}
 .td .card-banner{background:linear-gradient(135deg,#001a08,#003318);}
 .td:hover{border-color:#00cc44;}
-.card-body{padding:14px 18px 18px;}
-.card-title{font-size:17px;font-weight:bold;margin-bottom:4px;}
-.card-desc{font-size:12px;color:#777;line-height:1.5;}
+.card-body{padding:12px 16px 16px;}
+.card-title{font-size:16px;font-weight:bold;margin-bottom:3px;}
+.card-desc{font-size:11px;color:#666;line-height:1.5;}
 
-/* ── SECTION HEADERS ── */
-.sec{margin-bottom:28px;}
-.sec-title{font-size:16px;font-weight:bold;color:#aaa;text-transform:uppercase;letter-spacing:2px;
-  margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #1e1e2e;}
+/* SECTION */
+.sec{margin-bottom:32px;}
+.sec-title{font-size:14px;font-weight:bold;color:#888;text-transform:uppercase;letter-spacing:2px;
+  margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #1a1a28;}
 
-/* ── TOWER WORKSHOP ── */
-#workshop{background:#0e0e1c;border:1px solid #1e1e2e;border-radius:16px;padding:22px;margin-bottom:12px;}
-.form-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;}
-.field{display:flex;flex-direction:column;gap:5px;}
-.field label{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;}
-.field input[type=text]{background:#151520;border:1px solid #2a2a3a;color:#fff;
-  padding:8px 12px;border-radius:8px;font-size:14px;width:160px;}
-.field input[type=range]{width:140px;accent-color:#4488ff;}
-.field select{background:#151520;border:1px solid #2a2a3a;color:#fff;
-  padding:8px 12px;border-radius:8px;font-size:13px;}
-.stat-val{font-size:13px;color:#ffcc00;font-weight:bold;min-width:40px;}
-.type-btns{display:flex;gap:8px;}
-.type-btn{padding:7px 14px;border-radius:8px;border:1px solid #333;background:#151520;
-  color:#888;font-size:12px;cursor:pointer;transition:all .12s;}
-.type-btn.on{border-color:#4488ff;color:#fff;background:#1a1a3a;}
-.ico-grid{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
-.ico-btn{width:36px;height:36px;border-radius:8px;border:1px solid #333;background:#151520;
-  font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
-.ico-btn.on{border-color:#ffcc00;background:#2a2a10;}
-#towerPreview{
-  width:90px;height:90px;border-radius:12px;border:1px solid #2a2a3a;
-  background:#151520;display:flex;align-items:center;justify-content:center;font-size:40px;
-  flex-shrink:0;position:relative;overflow:hidden;
-}
-#previewCostTag{position:absolute;bottom:4px;left:0;right:0;text-align:center;
-  font-size:10px;color:#ffcc00;font-weight:bold;}
-.action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;}
-.btn{padding:9px 18px;border-radius:9px;border:none;font-size:13px;font-weight:bold;cursor:pointer;transition:all .14s;}
+/* 3D WORKSHOP */
+#workshopWrap{display:flex;gap:18px;flex-wrap:wrap;background:#0c0c18;
+  border:1px solid #1e1e2e;border-radius:16px;padding:18px;margin-bottom:12px;}
+
+/* 3D Canvas area */
+#editorLeft{flex-shrink:0;}
+#editorCanvas{border-radius:12px;border:1px solid #1e1e2e;display:block;cursor:grab;touch-action:none;}
+#editorCanvas:active{cursor:grabbing;}
+#editorHint{font-size:10px;color:#333;text-align:center;margin-top:5px;letter-spacing:1px;}
+
+/* Controls */
+#editorRight{flex:1;min-width:240px;display:flex;flex-direction:column;gap:12px;}
+
+/* Part tabs */
+.part-tabs{display:flex;gap:6px;}
+.ptab{padding:6px 13px;border-radius:8px;border:1px solid #2a2a3a;background:#151522;
+  color:#666;font-size:12px;cursor:pointer;transition:all .12s;}
+.ptab.on{border-color:#4488ff;color:#fff;background:#111a2a;}
+
+/* Part panel */
+.part-panel{background:#111120;border-radius:10px;padding:12px;border:1px solid #1e1e2e;}
+.pp-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.pp-label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;width:52px;flex-shrink:0;}
+.shape-btns{display:flex;gap:5px;flex-wrap:wrap;}
+.sbtn{padding:5px 10px;border-radius:7px;border:1px solid #2a2a3a;background:#151522;
+  color:#777;font-size:11px;cursor:pointer;transition:all .12s;}
+.sbtn.on{border-color:#4488ff;color:#fff;background:#0a1a3a;}
+.sval{font-size:12px;color:#ffcc00;min-width:28px;}
+input[type=range]{accent-color:#4488ff;width:110px;}
+input[type=color]{width:38px;height:28px;border:none;background:none;cursor:pointer;border-radius:4px;}
+.toggle-row{display:flex;align-items:center;gap:8px;}
+input[type=checkbox]{accent-color:#4488ff;width:15px;height:15px;}
+
+/* Stats */
+.stats-panel{background:#111120;border-radius:10px;padding:12px;border:1px solid #1e1e2e;}
+.stat-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.stat-label{font-size:11px;color:#666;width:60px;flex-shrink:0;}
+.stat-val{font-size:12px;color:#ffcc00;min-width:34px;}
+
+/* Bottom row */
+.bottom-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px;}
+.field-inline{display:flex;flex-direction:column;gap:4px;}
+.field-inline label{font-size:10px;color:#555;text-transform:uppercase;letter-spacing:1px;}
+.field-inline input[type=text]{background:#151522;border:1px solid #2a2a3a;color:#fff;
+  padding:7px 11px;border-radius:8px;font-size:13px;width:150px;}
+.ico-grid{display:flex;gap:5px;flex-wrap:wrap;}
+.ico-btn{width:34px;height:34px;border-radius:7px;border:1px solid #2a2a3a;background:#151522;
+  font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.ico-btn.on{border-color:#ffcc00;background:#1a1a00;}
+
+/* Buttons */
+.btn{padding:8px 16px;border-radius:8px;border:none;font-size:12px;font-weight:bold;cursor:pointer;transition:all .14s;}
 .btn-blue{background:#1a4a8a;color:#fff;}.btn-blue:hover{background:#2a5a9a;}
 .btn-green{background:#1a6a3a;color:#fff;}.btn-green:hover{background:#2a7a4a;}
 .btn-gold{background:#6a5a00;color:#ffcc00;}.btn-gold:hover{background:#7a6a00;}
 .btn-red{background:#6a1a1a;color:#ff8888;}.btn-red:hover{background:#7a2a2a;}
-.btn-sm{padding:6px 12px;font-size:11px;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.type-btns{display:flex;gap:6px;}
+.tbtn2{padding:5px 12px;border-radius:7px;border:1px solid #2a2a3a;background:#151522;
+  color:#777;font-size:11px;cursor:pointer;transition:all .12s;}
+.tbtn2.on{border-color:#4488ff;color:#fff;background:#0a1a3a;}
 
-/* ── MY TOWERS ── */
-#myTowersList{display:flex;gap:10px;flex-wrap:wrap;min-height:44px;}
-.my-tower-card{
-  padding:10px 14px;border-radius:10px;border:1px solid #2a2a3a;background:#0e0e1c;
-  display:flex;align-items:center;gap:10px;cursor:pointer;transition:all .13s;max-width:220px;
-}
-.my-tower-card:hover{border-color:#555;}
-.my-tower-card.pending{border-color:#334;}
-.my-tower-card.approved{border-color:#1a6a3a;}
-.tc-ico{font-size:22px;}
-.tc-info{flex:1;min-width:0;}
-.tc-name{font-size:13px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.tc-stat{font-size:10px;color:#666;}
-.tc-badge{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:bold;margin-top:3px;display:inline-block;}
-.badge-pending{background:rgba(80,80,255,0.15);color:#8888ff;border:1px solid #334;}
-.badge-approved{background:rgba(0,180,80,0.15);color:#44ff88;border:1px solid #1a6a3a;}
-.badge-rejected{background:rgba(180,0,0,0.15);color:#ff6666;border:1px solid #6a1a1a;}
+/* My towers */
+#myTowersList{display:flex;gap:10px;flex-wrap:wrap;min-height:40px;}
+.my-tc{padding:10px 13px;border-radius:10px;border:1px solid #2a2a3a;background:#0e0e1c;
+  display:flex;align-items:center;gap:9px;max-width:210px;}
+.my-tc.approved{border-color:#1a6a3a;}
+.tc-ico{font-size:20px;}.tc-name{font-size:12px;font-weight:bold;}
+.tc-stat{font-size:10px;color:#555;}.tc-actions{display:flex;gap:5px;margin-top:4px;}
+.badge{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:bold;margin-top:3px;display:inline-block;}
+.b-pend{background:rgba(80,80,255,.12);color:#8888ff;border:1px solid #334;}
+.b-appr{background:rgba(0,180,80,.12);color:#44ff88;border:1px solid #1a6a3a;}
+.b-imp{background:rgba(200,150,0,.12);color:#ffcc44;border:1px solid #554400;}
 
-/* ── APPROVED GALLERY ── */
-#approvedList{display:flex;gap:12px;flex-wrap:wrap;min-height:60px;}
-.ap-card{
-  width:170px;border-radius:12px;border:1px solid #1a6a3a;background:#0a1a0a;
-  padding:14px;transition:all .13s;cursor:default;
-}
+/* Approved gallery */
+#approvedList{display:flex;gap:12px;flex-wrap:wrap;min-height:50px;}
+.ap-card{width:160px;border-radius:12px;border:1px solid #1a6a3a;background:#0a140a;padding:13px;transition:all .13s;}
 .ap-card:hover{border-color:#44ff88;transform:translateY(-3px);}
-.ap-ico{font-size:30px;margin-bottom:6px;}
-.ap-name{font-size:14px;font-weight:bold;margin-bottom:2px;}
-.ap-auth{font-size:10px;color:#447744;margin-bottom:8px;}
-.ap-stats{font-size:10px;color:#668866;line-height:1.7;}
-.ap-actions{display:flex;gap:6px;margin-top:10px;}
-.empty-msg{color:#333;font-size:13px;padding:10px 0;font-style:italic;}
+.ap-ico{font-size:28px;margin-bottom:5px;}.ap-name{font-size:13px;font-weight:bold;margin-bottom:1px;}
+.ap-auth{font-size:10px;color:#336633;margin-bottom:7px;}.ap-stats{font-size:10px;color:#446644;line-height:1.7;}
+.ap-act{margin-top:8px;}
 
-/* ── IMPORT ── */
-#importRow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-#importCode{flex:1;min-width:180px;background:#151520;border:1px solid #2a2a3a;
-  color:#fff;padding:9px 14px;border-radius:9px;font-size:13px;font-family:monospace;}
+/* Import */
+#importRow{display:flex;gap:10px;flex-wrap:wrap;}
+#importCode{flex:1;min-width:160px;background:#151522;border:1px solid #2a2a3a;
+  color:#fff;padding:9px 13px;border-radius:9px;font-size:12px;font-family:monospace;}
 
-/* ── MODALS ── */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:50;
-  display:flex;align-items:center;justify-content:center;}
-.modal{background:#111118;border:1px solid #333;border-radius:16px;padding:30px 36px;
-  max-width:380px;width:90%;text-align:center;}
-.modal h2{font-size:22px;margin-bottom:10px;}
-.modal p{color:#888;font-size:13px;margin-bottom:18px;line-height:1.5;}
+/* Modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:50;display:flex;align-items:center;justify-content:center;}
+.modal{background:#111118;border:1px solid #333;border-radius:16px;padding:28px 34px;max-width:340px;width:90%;text-align:center;}
+.modal h2{font-size:20px;margin-bottom:8px;}.modal p{color:#777;font-size:12px;margin-bottom:16px;line-height:1.5;}
 .modal input{width:100%;background:#1a1a2a;border:1px solid #333;color:#fff;
-  padding:10px 14px;border-radius:9px;font-size:16px;margin-bottom:14px;text-align:center;}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
-  background:#1a1a2a;border:1px solid #333;color:#fff;padding:10px 22px;
-  border-radius:10px;font-size:13px;z-index:100;opacity:0;transition:opacity .2s;pointer-events:none;}
+  padding:10px 13px;border-radius:9px;font-size:15px;margin-bottom:12px;text-align:center;}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1a1a2a;
+  border:1px solid #333;color:#fff;padding:9px 20px;border-radius:10px;font-size:12px;
+  z-index:100;opacity:0;transition:opacity .2s;pointer-events:none;max-width:340px;text-align:center;}
 .toast.show{opacity:1;}
+.empty{color:#2a2a3a;font-size:12px;padding:8px 0;font-style:italic;}
 </style>
 </head>
 <body>
 
 <div class="stars" id="stars"></div>
-
 <div class="wrap">
 
-  <!-- PLAYER BAR -->
-  <div id="playerBar">
-    <div id="avatar">👤</div>
-    <div>
-      <div id="playerName">Guest</div>
-      <div id="playerSub">0 towers designed · 0 approved</div>
-    </div>
-    <button id="changeNameBtn" onclick="openLogin()">Change Name</button>
+<!-- PLAYER BAR -->
+<div id="playerBar">
+  <div id="avatar">👤</div>
+  <div>
+    <div id="playerName">Guest</div>
+    <div id="playerSub">0 towers designed</div>
   </div>
+  <button id="changeNameBtn" onclick="openLogin()">Change Name</button>
+</div>
 
-  <!-- GAME CARDS -->
-  <div class="sec">
-    <div class="cards">
-      <a class="card bh" href="index.html">
-        <div class="card-banner">🐉</div>
-        <div class="card-body">
-          <div class="card-title">Boss Hunter 3D</div>
-          <div class="card-desc">Fight 4 epic bosses. 1–2 players, random world order.</div>
-        </div>
-      </a>
-      <a class="card td" href="towerdefense.html">
-        <div class="card-banner">🏰</div>
-        <div class="card-body">
-          <div class="card-title">Tower Rush 3D</div>
-          <div class="card-desc">Place towers, survive 15 waves. Community towers available!</div>
-        </div>
-      </a>
-    </div>
+<!-- GAME CARDS -->
+<div class="sec">
+  <div class="cards">
+    <a class="card bh" href="index.html">
+      <div class="card-banner">🐉</div>
+      <div class="card-body"><div class="card-title">Boss Hunter 3D</div><div class="card-desc">Fight 4 epic bosses. 1–2 players.</div></div>
+    </a>
+    <a class="card td" href="towerdefense.html">
+      <div class="card-banner">🏰</div>
+      <div class="card-body"><div class="card-title">Tower Rush 3D</div><div class="card-desc">15 waves · community towers supported!</div></div>
+    </a>
   </div>
+</div>
 
-  <!-- TOWER WORKSHOP -->
-  <div class="sec">
-    <div class="sec-title">🔧 Tower Workshop</div>
-    <div id="workshop">
-      <div class="form-row">
-        <div id="towerPreview"><span id="prevIco">🗼</span><div id="previewCostTag">$50</div></div>
-        <div>
-          <div class="field" style="margin-bottom:10px;">
-            <label>Tower Name</label>
-            <input type="text" id="tName" value="My Tower" oninput="updatePreview()">
-          </div>
-          <div class="field">
-            <label>Icon</label>
-            <div class="ico-grid" id="icoGrid"></div>
-          </div>
+<!-- 3D TOWER WORKSHOP -->
+<div class="sec">
+  <div class="sec-title">🔧 3D Tower Workshop</div>
+  <div id="workshopWrap">
+
+    <!-- LEFT: 3D Preview -->
+    <div id="editorLeft">
+      <canvas id="editorCanvas" width="260" height="280"></canvas>
+      <div id="editorHint">DRAG TO ROTATE</div>
+    </div>
+
+    <!-- RIGHT: Controls -->
+    <div id="editorRight">
+
+      <!-- Part tabs -->
+      <div class="part-tabs">
+        <div class="ptab on" onclick="setPart('base')">Base</div>
+        <div class="ptab"    onclick="setPart('body')">Body</div>
+        <div class="ptab"    onclick="setPart('top')">Top</div>
+        <div class="ptab"    onclick="setPart('gun')">Gun</div>
+      </div>
+
+      <!-- BASE panel -->
+      <div class="part-panel" id="panel_base">
+        <div class="pp-row">
+          <span class="pp-label">Shape</span>
+          <div class="shape-btns" id="sb_base"></div>
         </div>
-        <div style="flex:1;min-width:180px;">
-          <div class="field" style="margin-bottom:10px;">
-            <label>Type</label>
-            <div class="type-btns">
-              <div class="type-btn on" onclick="setType('basic')">Basic</div>
-              <div class="type-btn"    onclick="setType('aoe')">AOE Bomb</div>
-              <div class="type-btn"    onclick="setType('slow')">Freeze</div>
-            </div>
-          </div>
-          <div class="field">
-            <label>Color</label>
-            <input type="color" id="tColor" value="#4488ff" onchange="updatePreview()" style="width:60px;height:32px;border:none;background:none;cursor:pointer;">
-          </div>
+        <div class="pp-row">
+          <span class="pp-label">Color</span>
+          <input type="color" id="col_base" value="#445544" oninput="rebuildTower()">
+        </div>
+        <div class="pp-row">
+          <span class="pp-label">Width</span>
+          <input type="range" id="bsW" min="6" max="16" value="10" oninput="sv('bsWv',this.value/10,'x');rebuildTower()">
+          <span class="sval" id="bsWv">1.0x</span>
         </div>
       </div>
-      <div class="form-row">
-        <div class="field">
-          <label>Damage <span class="stat-val" id="vDmg">12</span></label>
-          <input type="range" id="sDmg" min="3" max="55" value="12" oninput="sv('vDmg',this.value);updatePreview()">
+
+      <!-- BODY panel -->
+      <div class="part-panel" id="panel_body" style="display:none;">
+        <div class="pp-row">
+          <span class="pp-label">Shape</span>
+          <div class="shape-btns" id="sb_body"></div>
         </div>
-        <div class="field">
-          <label>Range <span class="stat-val" id="vRng">9</span></label>
-          <input type="range" id="sRng" min="4" max="22" value="9" oninput="sv('vRng',this.value);updatePreview()">
+        <div class="pp-row">
+          <span class="pp-label">Color</span>
+          <input type="color" id="col_body" value="#1133aa" oninput="rebuildTower()">
         </div>
-        <div class="field">
-          <label>Fire Rate <span class="stat-val" id="vRate">1.1</span>/s</label>
-          <input type="range" id="sRate" min="2" max="40" value="11" oninput="sv('vRate',(this.value/10).toFixed(1));updatePreview()">
+        <div class="pp-row">
+          <span class="pp-label">Height</span>
+          <input type="range" id="bdH" min="5" max="25" value="10" oninput="sv('bdHv',this.value/10,'x');rebuildTower()">
+          <span class="sval" id="bdHv">1.0x</span>
         </div>
-        <div class="field" id="fAoe" style="display:none;">
-          <label>AOE Radius <span class="stat-val" id="vAoe">3</span></label>
-          <input type="range" id="sAoe" min="2" max="6" value="3" oninput="sv('vAoe',this.value);updatePreview()">
-        </div>
-        <div class="field" id="fSlow" style="display:none;">
-          <label>Slow Secs <span class="stat-val" id="vSlow">2</span></label>
-          <input type="range" id="sSlow" min="1" max="4" value="2" oninput="sv('vSlow',this.value);updatePreview()">
+        <div class="pp-row">
+          <span class="pp-label">Width</span>
+          <input type="range" id="bdW" min="5" max="18" value="10" oninput="sv('bdWv',this.value/10,'x');rebuildTower()">
+          <span class="sval" id="bdWv">1.0x</span>
         </div>
       </div>
-      <div class="action-row">
-        <button class="btn btn-blue" onclick="saveTower()">💾 Save to My Towers</button>
-        <button class="btn btn-gold" onclick="copyCode()">📋 Copy Share Code</button>
-        <small style="color:#444;align-self:center;font-size:11px;">Share code with Claude to get approved!</small>
+
+      <!-- TOP panel -->
+      <div class="part-panel" id="panel_top" style="display:none;">
+        <div class="pp-row">
+          <span class="pp-label">Shape</span>
+          <div class="shape-btns" id="sb_top"></div>
+        </div>
+        <div class="pp-row">
+          <span class="pp-label">Color</span>
+          <input type="color" id="col_top" value="#4488ff" oninput="rebuildTower()">
+        </div>
+        <div class="pp-row">
+          <span class="pp-label">Scale</span>
+          <input type="range" id="tpS" min="5" max="18" value="10" oninput="sv('tpSv',this.value/10,'x');rebuildTower()">
+          <span class="sval" id="tpSv">1.0x</span>
+        </div>
+        <div class="pp-row">
+          <span class="pp-label">Glow</span>
+          <input type="range" id="tpG" min="0" max="10" value="3" oninput="sv('tpGv',this.value/10,'');rebuildTower()">
+          <span class="sval" id="tpGv">0.3</span>
+        </div>
+      </div>
+
+      <!-- GUN panel -->
+      <div class="part-panel" id="panel_gun" style="display:none;">
+        <div class="pp-row">
+          <span class="pp-label">Show</span>
+          <input type="checkbox" id="gunShow" checked onchange="rebuildTower()">
+        </div>
+        <div class="pp-row">
+          <span class="pp-label">Style</span>
+          <div class="shape-btns" id="sb_gun"></div>
+        </div>
+        <div class="pp-row">
+          <span class="pp-label">Color</span>
+          <input type="color" id="col_gun" value="#222222" oninput="rebuildTower()">
+        </div>
+        <div class="pp-row">
+          <span class="pp-label">Length</span>
+          <input type="range" id="gnL" min="4" max="16" value="9" oninput="sv('gnLv',this.value/10,'x');rebuildTower()">
+          <span class="sval" id="gnLv">0.9x</span>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="stats-panel">
+        <div class="stat-row">
+          <span class="stat-label">Type</span>
+          <div class="type-btns">
+            <div class="tbtn2 on" onclick="setTType('basic')">Basic</div>
+            <div class="tbtn2"    onclick="setTType('aoe')">AOE</div>
+            <div class="tbtn2"    onclick="setTType('slow')">Freeze</div>
+          </div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Damage</span>
+          <input type="range" id="sDmg" min="3" max="55" value="12" oninput="sv('vDmg',this.value,'')">
+          <span class="sval" id="vDmg">12</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Range</span>
+          <input type="range" id="sRng" min="4" max="22" value="9" oninput="sv('vRng',this.value,'')">
+          <span class="sval" id="vRng">9</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">Fire Rate</span>
+          <input type="range" id="sRate" min="2" max="40" value="11" oninput="sv('vRate',(this.value/10).toFixed(1),'/s')">
+          <span class="sval" id="vRate">1.1/s</span>
+        </div>
+        <div class="stat-row" id="rowAoe" style="display:none;">
+          <span class="stat-label">AOE Rad</span>
+          <input type="range" id="sAoe" min="2" max="6" value="3" oninput="sv('vAoe',this.value,'')">
+          <span class="sval" id="vAoe">3</span>
+        </div>
+        <div class="stat-row" id="rowSlow" style="display:none;">
+          <span class="stat-label">Slow Secs</span>
+          <input type="range" id="sSlow" min="1" max="4" value="2" oninput="sv('vSlow',this.value,'s')">
+          <span class="sval" id="vSlow">2s</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label" style="color:#ffcc00;">Cost</span>
+          <span style="font-size:16px;font-weight:bold;color:#ffcc00;" id="costDisplay">$50</span>
+        </div>
+      </div>
+
+    </div><!-- /editorRight -->
+  </div><!-- /workshopWrap -->
+
+  <!-- Name, Icon, Actions -->
+  <div style="background:#0c0c18;border:1px solid #1e1e2e;border-radius:12px;padding:14px 18px;">
+    <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;">
+      <div class="field-inline">
+        <label>Tower Name</label>
+        <input type="text" id="tName" value="My Tower" maxlength="20" oninput="updateCost()">
+      </div>
+      <div class="field-inline">
+        <label>Icon</label>
+        <div class="ico-grid" id="icoGrid"></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:auto;padding-top:20px;">
+        <button class="btn btn-blue" onclick="saveTower()">💾 Save</button>
+        <button class="btn btn-gold" onclick="copyCode()">📋 Copy Code</button>
+        <span style="font-size:10px;color:#333;align-self:center;">Paste code to Claude to get approved!</span>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- MY TOWERS -->
-  <div class="sec">
-    <div class="sec-title">📦 My Towers</div>
-    <div id="myTowersList"><div class="empty-msg">No towers yet — design one above!</div></div>
-  </div>
+<!-- MY TOWERS -->
+<div class="sec">
+  <div class="sec-title">📦 My Towers</div>
+  <div id="myTowersList"><div class="empty">No towers yet — design one above!</div></div>
+</div>
 
-  <!-- APPROVED COMMUNITY TOWERS -->
-  <div class="sec">
-    <div class="sec-title">✅ Approved Community Towers</div>
-    <p style="font-size:12px;color:#445;margin-bottom:14px;">
-      Design a tower above, copy the share code, and paste it to Claude in chat to get it reviewed and approved.
-      Approved towers appear here for everyone to use in Tower Rush 3D!
-    </p>
-    <div id="approvedList"><div class="empty-msg">No approved towers yet. Be the first!</div></div>
-  </div>
+<!-- APPROVED GALLERY -->
+<div class="sec">
+  <div class="sec-title">✅ Approved Community Towers</div>
+  <p style="font-size:11px;color:#333;margin-bottom:12px;">Design a tower, copy the code, paste it to Claude → gets reviewed and added here for everyone!</p>
+  <div id="approvedList"><div class="empty">No approved towers yet. Be the first!</div></div>
+</div>
 
-  <!-- IMPORT CODE -->
-  <div class="sec">
-    <div class="sec-title">📥 Import Tower Code</div>
-    <div id="importRow">
-      <input id="importCode" type="text" placeholder="Paste a tower share code here...">
-      <button class="btn btn-blue" onclick="importTower()">Import</button>
-    </div>
+<!-- IMPORT -->
+<div class="sec">
+  <div class="sec-title">📥 Import Tower Code</div>
+  <div id="importRow">
+    <input id="importCode" type="text" placeholder="Paste a share code here...">
+    <button class="btn btn-blue" onclick="importTower()">Import</button>
   </div>
+</div>
 
 </div><!-- /wrap -->
 
@@ -262,291 +366,346 @@ body{background:#0a0a12;min-height:100vh;font-family:'Segoe UI',sans-serif;color
 <div class="modal-bg" id="loginModal" style="display:none;">
   <div class="modal">
     <h2>👤 Your Name</h2>
-    <p>Choose a name — this is how your towers will be credited.</p>
-    <input type="text" id="nameInput" placeholder="Enter your name..." maxlength="20"
-      onkeydown="if(event.key==='Enter')saveName()">
-    <button class="btn btn-blue" onclick="saveName()" style="width:100%;">Save Name</button>
+    <p>Your name appears on all your towers.</p>
+    <input type="text" id="nameInput" placeholder="Enter your name..." maxlength="20" onkeydown="if(event.key==='Enter')saveName()">
+    <button class="btn btn-blue" onclick="saveName()" style="width:100%;">Save</button>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ─────────────────────────────────────────────────────────────────────────────
-// APPROVED TOWERS — Claude adds entries here after review
+// APPROVED TOWERS — Claude fills this in after reviewing submitted codes
 // ─────────────────────────────────────────────────────────────────────────────
 const APPROVED_TOWERS = [
-  // Example (filled in by Claude when approving):
+  // Example entry (Claude adds here when approving):
   // {id:'ap001',name:'Thunder Bolt',author:'Jasper',icon:'⚡',color:'#ffff00',col2:'#886600',
   //  cost:90,range:10,dmg:18,rate:2.2,aoe:0,slow:0,ttype:'basic',
-  //  desc:'Fast and electric.'}
+  //  design:{base:{shape:'round',color:'#334433',w:1},body:{shape:'hex',color:'#886600',h:1.2,w:0.9},
+  //          top:{shape:'crystal',color:'#ffff00',s:1,g:0.6},gun:{show:true,style:'single',color:'#333',l:1}}}
 ];
-
-// ─────────────────────────────────────────────────────────────────────────────
-// STORAGE HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
-const store = {
-  get:(k,def)=>{ try{const v=localStorage.getItem(k);return v==null?def:JSON.parse(v);}catch{return def;} },
-  set:(k,v)=>{ try{localStorage.setItem(k,JSON.stringify(v));}catch{} }
-};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PLAYER
 // ─────────────────────────────────────────────────────────────────────────────
-let player = store.get('hub_player', {name:'', color:'#4488ff'});
-
+const store={
+  get:(k,d)=>{try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch{return d;}},
+  set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+};
+let player=store.get('hub_player',{name:'',color:'#4488ff'});
 function renderPlayer(){
-  const towers = store.get('hub_my_towers',[]);
-  const approved = towers.filter(t=>t.status==='approved').length;
-  if(!player.name){ openLogin(); return; }
-  document.getElementById('playerName').textContent = player.name;
-  document.getElementById('playerSub').textContent =
-    towers.length+' tower'+(towers.length===1?'':'s')+' designed · '+approved+' approved';
-  document.getElementById('avatar').style.background = player.color+'33';
-  document.getElementById('avatar').style.borderColor = player.color;
+  const list=store.get('hub_my_towers',[]);
+  if(!player.name){openLogin();return;}
+  document.getElementById('playerName').textContent=player.name;
+  document.getElementById('playerSub').textContent=list.length+' tower'+(list.length===1?'':'s')+' designed';
+  document.getElementById('avatar').style.borderColor=player.color;
+}
+function openLogin(){document.getElementById('nameInput').value=player.name||'';document.getElementById('loginModal').style.display='flex';setTimeout(()=>document.getElementById('nameInput').focus(),80);}
+function saveName(){const n=document.getElementById('nameInput').value.trim();if(!n){toast('Enter a name!');return;}player.name=n;store.set('hub_player',player);document.getElementById('loginModal').style.display='none';renderPlayer();}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 3D EDITOR
+// ─────────────────────────────────────────────────────────────────────────────
+let edScene,edCam,edRenderer,edGroup,edAnimId;
+let isDrag=false,lastMX=0,towerYaw=0,autoSpin=true;
+const currentPart={base:'round',body:'round',top:'sphere',gun:'single'};
+
+function initEditor(){
+  const canvas=document.getElementById('editorCanvas');
+  edScene=new THREE.Scene();edScene.background=new THREE.Color(0x080810);
+  edCam=new THREE.PerspectiveCamera(46,260/280,0.1,60);
+  edCam.position.set(0,3.5,7);edCam.lookAt(0,1.8,0);
+  edRenderer=new THREE.WebGLRenderer({canvas,antialias:true});
+  edRenderer.setSize(260,280);edRenderer.shadowMap.enabled=true;
+
+  edScene.add(new THREE.AmbientLight(0xaabbcc,0.55));
+  const dl=new THREE.DirectionalLight(0xffffff,0.9);dl.position.set(4,8,5);dl.castShadow=true;edScene.add(dl);
+  edScene.add(new THREE.DirectionalLight(0x222244,0.3)).position.set(-3,3,-4);
+
+  const grid=new THREE.GridHelper(8,8,0x111122,0x0d0d1a);edScene.add(grid);
+  grid.position.y=-0.01;
+
+  // Drag to rotate
+  canvas.addEventListener('mousedown',e=>{isDrag=true;lastMX=e.clientX;autoSpin=false;});
+  canvas.addEventListener('touchstart',e=>{isDrag=true;lastMX=e.touches[0].clientX;autoSpin=false;},{passive:true});
+  window.addEventListener('mouseup',()=>isDrag=false);
+  window.addEventListener('touchend',()=>isDrag=false);
+  window.addEventListener('mousemove',e=>{if(isDrag){towerYaw+=(e.clientX-lastMX)*0.012;lastMX=e.clientX;}});
+  window.addEventListener('touchmove',e=>{if(isDrag){towerYaw+=(e.touches[0].clientX-lastMX)*0.012;lastMX=e.touches[0].clientX;}},{passive:true});
+
+  rebuildTower();
+  edLoop();
 }
 
-function openLogin(){
-  document.getElementById('nameInput').value = player.name||'';
-  document.getElementById('loginModal').style.display='flex';
-  setTimeout(()=>document.getElementById('nameInput').focus(),80);
+function edLoop(){
+  edAnimId=requestAnimationFrame(edLoop);
+  if(autoSpin) towerYaw+=0.008;
+  if(edGroup) edGroup.rotation.y=towerYaw;
+  edRenderer.render(edScene,edCam);
 }
-function saveName(){
-  const n = document.getElementById('nameInput').value.trim();
-  if(!n){ toast('Please enter a name!'); return; }
-  player.name = n;
-  store.set('hub_player', player);
-  document.getElementById('loginModal').style.display='none';
-  renderPlayer();
+
+function hc(hex){return parseInt((hex||'#888888').replace('#',''),16);}
+function getSlider(id){return parseFloat(document.getElementById(id).value);}
+
+function rebuildTower(){
+  if(edGroup){edScene.remove(edGroup);edGroup.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();});}
+  edGroup=new THREE.Group();
+
+  const baseCol=hc(document.getElementById('col_base').value);
+  const bodyCol=hc(document.getElementById('col_body').value);
+  const topCol =hc(document.getElementById('col_top').value);
+  const gunCol =hc(document.getElementById('col_gun').value);
+  const bsW=getSlider('bsW')/10;
+  const bdH=getSlider('bdH')/10;
+  const bdW=getSlider('bdW')/10;
+  const tpS=getSlider('tpS')/10;
+  const tpG=getSlider('tpG')/10;
+  const gnL=getSlider('gnL')/10;
+
+  // BASE
+  let bGeo;
+  switch(currentPart.base){
+    case 'box':   bGeo=new THREE.BoxGeometry(2.2*bsW,0.35,2.2*bsW);break;
+    case 'hex':   bGeo=new THREE.CylinderGeometry(1.0*bsW,1.25*bsW,0.35,6);break;
+    case 'round': default: bGeo=new THREE.CylinderGeometry(1.05*bsW,1.3*bsW,0.35,8);
+  }
+  const base=new THREE.Mesh(bGeo,new THREE.MeshLambertMaterial({color:baseCol}));
+  base.position.y=0.175;base.castShadow=true;base.receiveShadow=true;edGroup.add(base);
+
+  // BODY
+  const bodyH=1.55*bdH;
+  let bodyGeo;
+  switch(currentPart.body){
+    case 'square': bodyGeo=new THREE.BoxGeometry(1.2*bdW,bodyH,1.2*bdW);break;
+    case 'spire':  bodyGeo=new THREE.CylinderGeometry(0.28*bdW,0.6*bdW,bodyH*1.3,8);break;
+    case 'hex':    bodyGeo=new THREE.CylinderGeometry(0.58*bdW,0.72*bdW,bodyH,6);break;
+    case 'oct':    bodyGeo=new THREE.CylinderGeometry(0.58*bdW,0.72*bdW,bodyH,8);break;
+    case 'round': default: bodyGeo=new THREE.CylinderGeometry(0.55*bdW,0.7*bdW,bodyH,8);
+  }
+  const body=new THREE.Mesh(bodyGeo,new THREE.MeshLambertMaterial({color:bodyCol}));
+  body.position.y=0.35+bodyH/2;body.castShadow=true;edGroup.add(body);
+  const topY=0.35+bodyH;
+
+  // TOP
+  let topGeo;
+  switch(currentPart.top){
+    case 'cone':    topGeo=new THREE.ConeGeometry(0.65*tpS,1.2*tpS,8);break;
+    case 'disc':    topGeo=new THREE.CylinderGeometry(0.9*tpS,0.75*tpS,0.25,8);break;
+    case 'crystal': topGeo=new THREE.OctahedronGeometry(0.65*tpS,0);break;
+    case 'box':     topGeo=new THREE.BoxGeometry(1.1*tpS,0.9*tpS,1.1*tpS);break;
+    case 'spike':   topGeo=new THREE.ConeGeometry(0.35*tpS,1.8*tpS,6);break;
+    case 'sphere': default: topGeo=new THREE.SphereGeometry(0.65*tpS,10,8);
+  }
+  const topOffsets={sphere:0.65,cone:0.6,disc:0.12,crystal:0,box:0.45,spike:0.9};
+  const topMat=new THREE.MeshLambertMaterial({color:topCol,emissive:new THREE.Color(topCol).multiplyScalar(tpG)});
+  const top=new THREE.Mesh(topGeo,topMat);
+  top.position.y=topY+(topOffsets[currentPart.top]||0.65)*tpS;top.castShadow=true;edGroup.add(top);
+
+  // GUN
+  if(document.getElementById('gunShow').checked){
+    const gunMat=new THREE.MeshLambertMaterial({color:gunCol});
+    const makeBarrel=(ox,oy)=>{
+      const g=new THREE.Mesh(new THREE.CylinderGeometry(0.1,0.12,0.9*gnL,6),gunMat);
+      g.rotation.x=Math.PI/2;g.position.set(ox,topY+oy,0.65);edGroup.add(g);
+    };
+    if(currentPart.gun==='double'){makeBarrel(-0.22,-0.1);makeBarrel(0.22,-0.1);}
+    else if(currentPart.gun==='triple'){makeBarrel(0,0.1);makeBarrel(-0.28,-0.15);makeBarrel(0.28,-0.15);}
+    else makeBarrel(0,0);
+  }
+
+  edGroup.rotation.y=towerYaw;
+  edScene.add(edGroup);
+  updateCost();
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TOWER WORKSHOP
+// SHAPE BUTTONS
 // ─────────────────────────────────────────────────────────────────────────────
-const ICONS=['🗼','⚡','🎯','💥','❄️','🔥','☄️','🌀','💜','🌟','🪄','⚔️','🛡️','💎','🌈'];
-let selectedIcon = ICONS[0];
-let towerType = 'basic';
+const SHAPES={
+  base:[{k:'round',l:'Round'},{k:'hex',l:'Hex'},{k:'box',l:'Square'}],
+  body:[{k:'round',l:'Round'},{k:'square',l:'Square'},{k:'spire',l:'Spire'},{k:'hex',l:'Hex'},{k:'oct',l:'Octa'}],
+  top: [{k:'sphere',l:'Sphere'},{k:'cone',l:'Cone'},{k:'crystal',l:'Crystal'},{k:'disc',l:'Disc'},{k:'box',l:'Box'},{k:'spike',l:'Spike'}],
+  gun: [{k:'single',l:'Single'},{k:'double',l:'Double'},{k:'triple',l:'Triple'}],
+};
+function buildShapeBtns(){
+  ['base','body','top','gun'].forEach(part=>{
+    const c=document.getElementById('sb_'+part);c.innerHTML='';
+    SHAPES[part].forEach(s=>{
+      const b=document.createElement('div');b.className='sbtn'+(currentPart[part]===s.k?' on':'');
+      b.textContent=s.l;b.onclick=()=>{currentPart[part]=s.k;buildShapeBtns();rebuildTower();};
+      c.appendChild(b);
+    });
+  });
+}
+buildShapeBtns();
 
+let activePart='base';
+function setPart(p){
+  activePart=p;
+  ['base','body','top','gun'].forEach(part=>{
+    document.getElementById('panel_'+part).style.display=part===p?'block':'none';
+  });
+  document.querySelectorAll('.ptab').forEach((t,i)=>t.classList.toggle('on',['base','body','top','gun'][i]===p));
+}
+
+let towerType='basic';
+function setTType(t){
+  towerType=t;
+  document.querySelectorAll('.tbtn2').forEach((b,i)=>b.classList.toggle('on',['basic','aoe','slow'][i]===t));
+  document.getElementById('rowAoe').style.display=t==='aoe'?'flex':'none';
+  document.getElementById('rowSlow').style.display=t==='slow'?'flex':'none';
+  updateCost();
+}
+
+function sv(id,v,suffix){document.getElementById(id).textContent=v+suffix;}
+function updateCost(){
+  const dmg=+document.getElementById('sDmg').value;
+  const rng=+document.getElementById('sRng').value;
+  const rate=+document.getElementById('sRate').value/10;
+  const aoe=towerType==='aoe'?+document.getElementById('sAoe').value:0;
+  const slow=towerType==='slow'?+document.getElementById('sSlow').value:0;
+  const cost=Math.max(40,Math.round((dmg*rate*2.2+rng*3.5+aoe*14+slow*18)/10)*10);
+  document.getElementById('costDisplay').textContent='$'+cost;
+  return cost;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ICON PICKER
+// ─────────────────────────────────────────────────────────────────────────────
+const ICONS=['🗼','⚡','🎯','💥','❄️','🔥','☄️','🌀','💜','🌟','🪄','⚔️','🛡️','💎','🌈','🔮','🏹','⚙️','🌊','🧲'];
+let selectedIcon=ICONS[0];
 function buildIcoGrid(){
-  const g = document.getElementById('icoGrid');
+  const g=document.getElementById('icoGrid');g.innerHTML='';
   ICONS.forEach(ico=>{
-    const b = document.createElement('div');
-    b.className='ico-btn'+(ico===selectedIcon?' on':'');
-    b.textContent=ico;
-    b.onclick=()=>{ selectedIcon=ico; buildIcoGrid(); updatePreview(); };
-    g.appendChild(b);
+    const b=document.createElement('div');b.className='ico-btn'+(ico===selectedIcon?' on':'');
+    b.textContent=ico;b.onclick=()=>{selectedIcon=ico;buildIcoGrid();};g.appendChild(b);
   });
 }
 buildIcoGrid();
 
-function setType(t){
-  towerType=t;
-  document.querySelectorAll('.type-btn').forEach((b,i)=>b.classList.toggle('on',['basic','aoe','slow'][i]===t));
-  document.getElementById('fAoe').style.display=t==='aoe'?'flex':'none';
-  document.getElementById('fSlow').style.display=t==='slow'?'flex':'none';
-  updatePreview();
-}
-
-function sv(id,v){ document.getElementById(id).textContent=v; }
-
-function calcCost(){
-  const dmg=+document.getElementById('sDmg').value;
-  const rng=+document.getElementById('sRng').value;
-  const rate=+document.getElementById('sRate').value/10;
-  const aoe=towerType==='aoe'?+document.getElementById('sAoe').value:0;
-  const slow=towerType==='slow'?+document.getElementById('sSlow').value:0;
-  let c = dmg*rate*2.2 + rng*3.5 + aoe*14 + slow*18;
-  return Math.max(40, Math.round(c/10)*10);
-}
-
-function updatePreview(){
-  document.getElementById('prevIco').textContent=selectedIcon;
-  document.getElementById('previewCostTag').textContent='$'+calcCost();
-  document.getElementById('towerPreview').style.background=
-    document.getElementById('tColor').value+'22';
-}
-updatePreview();
-
-function buildTowerObj(){
-  const color=document.getElementById('tColor').value;
-  const dmg=+document.getElementById('sDmg').value;
-  const rng=+document.getElementById('sRng').value;
-  const rate=+document.getElementById('sRate').value/10;
-  const aoe=towerType==='aoe'?+document.getElementById('sAoe').value:0;
-  const slow=towerType==='slow'?+document.getElementById('sSlow').value:0;
+// ─────────────────────────────────────────────────────────────────────────────
+// TOWER DATA
+// ─────────────────────────────────────────────────────────────────────────────
+function collectDesign(){
   return{
-    id:'t'+Date.now(),
-    name:document.getElementById('tName').value.trim()||'My Tower',
-    author:player.name||'Unknown',
-    icon:selectedIcon,color,
-    col2:darken(color),
-    cost:calcCost(),range:rng,dmg,rate,aoe,slow,
-    ttype:towerType,status:'pending'
+    base:{shape:currentPart.base,color:document.getElementById('col_base').value,w:getSlider('bsW')/10},
+    body:{shape:currentPart.body,color:document.getElementById('col_body').value,h:getSlider('bdH')/10,w:getSlider('bdW')/10},
+    top:{shape:currentPart.top,color:document.getElementById('col_top').value,s:getSlider('tpS')/10,g:getSlider('tpG')/10},
+    gun:{show:document.getElementById('gunShow').checked,style:currentPart.gun,color:document.getElementById('col_gun').value,l:getSlider('gnL')/10}
   };
 }
-
-function darken(hex){
-  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
-  return '#'+[Math.floor(r/2),Math.floor(g/2),Math.floor(b/2)].map(x=>x.toString(16).padStart(2,'0')).join('');
+function buildTowerObj(){
+  const design=collectDesign();
+  return{id:'t'+Date.now(),name:document.getElementById('tName').value.trim()||'My Tower',
+    author:player.name||'Unknown',icon:selectedIcon,
+    color:document.getElementById('col_top').value,
+    col2:document.getElementById('col_body').value,
+    cost:updateCost(),range:+document.getElementById('sRng').value,
+    dmg:+document.getElementById('sDmg').value,
+    rate:parseFloat(document.getElementById('sRate').value)/10,
+    aoe:towerType==='aoe'?+document.getElementById('sAoe').value:0,
+    slow:towerType==='slow'?+document.getElementById('sSlow').value:0,
+    ttype:towerType,status:'pending',design};
+}
+function towerToCode(t){return btoa(JSON.stringify({n:t.name,a:t.author,i:t.icon,c:t.color,c2:t.col2,cost:t.cost,rng:t.range,dmg:t.dmg,rate:t.rate,aoe:t.aoe,slow:t.slow,tt:t.ttype,ds:t.design}));}
+function codeToTower(code){
+  try{const d=JSON.parse(atob(code.trim()));
+    return{id:'imp'+Date.now(),name:d.n,author:d.a||'Unknown',icon:d.i||'🗼',color:d.c,col2:d.c2||'#333',cost:d.cost,range:d.rng,dmg:d.dmg,rate:d.rate,aoe:d.aoe||0,slow:d.slow||0,ttype:d.tt||'basic',status:'imported',design:d.ds||null};}
+  catch{return null;}
 }
 
 function saveTower(){
-  if(!player.name){ toast('Set your name first!'); openLogin(); return; }
+  if(!player.name){toast('Set your name first!');openLogin();return;}
   const t=buildTowerObj();
-  const list=store.get('hub_my_towers',[]);
-  list.push(t); store.set('hub_my_towers',list);
-  renderMyTowers(); renderPlayer();
-  toast('Tower saved! Copy the share code to submit to Claude for approval.');
+  const list=store.get('hub_my_towers',[]);list.push(t);store.set('hub_my_towers',list);
+  renderMyTowers();renderPlayer();
+  toast('Saved! Copy the code and paste it to Claude to get approved.');
 }
-
-function towerToCode(t){
-  const d={n:t.name,a:t.author,i:t.icon,c:t.color,c2:t.col2,
-    cost:t.cost,rng:t.range,dmg:t.dmg,rate:t.rate,
-    aoe:t.aoe,slow:t.slow,tt:t.ttype};
-  return btoa(JSON.stringify(d));
-}
-
-function codeToTower(code){
-  try{
-    const d=JSON.parse(atob(code.trim()));
-    return{id:'imp'+Date.now(),name:d.n,author:d.a||'Unknown',icon:d.i||'🗼',
-      color:d.c,col2:d.c2||'#333333',cost:d.cost,range:d.rng,dmg:d.dmg,
-      rate:d.rate,aoe:d.aoe||0,slow:d.slow||0,ttype:d.tt||'basic',status:'imported'};
-  }catch{return null;}
-}
-
 function copyCode(){
-  if(!player.name){ toast('Set your name first!'); openLogin(); return; }
+  if(!player.name){toast('Set your name first!');openLogin();return;}
   const t=buildTowerObj();
-  const code=towerToCode(t);
-  navigator.clipboard.writeText(code).then(()=>toast('Code copied! Paste it to Claude in chat to get approved.'))
-    .catch(()=>{ prompt('Copy this code:',code); });
+  navigator.clipboard.writeText(towerToCode(t))
+    .then(()=>toast('Code copied! Paste it to Claude in chat.'))
+    .catch(()=>prompt('Copy this code:',towerToCode(t)));
 }
-
 function importTower(){
-  const code=document.getElementById('importCode').value.trim();
-  if(!code){ toast('Paste a code first!'); return; }
-  const t=codeToTower(code);
-  if(!t){ toast('Invalid code — check and try again.'); return; }
-  // Check not already imported
-  const list=store.get('hub_my_towers',[]);
-  list.push(t); store.set('hub_my_towers',list);
+  const code=document.getElementById('importCode').value.trim();if(!code){toast('Paste a code first!');return;}
+  const t=codeToTower(code);if(!t){toast('Invalid code!');return;}
+  const list=store.get('hub_my_towers',[]);list.push(t);store.set('hub_my_towers',list);
   document.getElementById('importCode').value='';
-  renderMyTowers();
-  toast('Tower imported: '+t.name);
+  renderMyTowers();toast('Imported: '+t.name);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RENDER MY TOWERS
+// RENDER LISTS
 // ─────────────────────────────────────────────────────────────────────────────
 function renderMyTowers(){
   const el=document.getElementById('myTowersList');
   const list=store.get('hub_my_towers',[]);
-
-  // Merge with approved status from APPROVED_TOWERS
-  list.forEach(t=>{
-    const ap=APPROVED_TOWERS.find(a=>a.name===t.name&&a.author===t.author);
-    if(ap) t.status='approved';
-  });
+  // Sync approved status
+  list.forEach(t=>{if(APPROVED_TOWERS.find(a=>a.name===t.name&&a.author===t.author))t.status='approved';});
   store.set('hub_my_towers',list);
-
-  if(!list.length){el.innerHTML='<div class="empty-msg">No towers yet — design one above!</div>';return;}
+  if(!list.length){el.innerHTML='<div class="empty">No towers yet!</div>';return;}
   el.innerHTML='';
   list.slice().reverse().forEach((t,ri)=>{
     const i=list.length-1-ri;
+    const badge=t.status==='approved'?'<span class="badge b-appr">✅ Approved</span>':
+      t.status==='imported'?'<span class="badge b-imp">📥 Imported</span>':
+      '<span class="badge b-pend">⏳ Pending</span>';
     const card=document.createElement('div');
-    card.className='my-tower-card '+(t.status==='approved'?'approved':'pending');
-    const badge=t.status==='approved'?'<span class="tc-badge badge-approved">✅ Approved</span>':
-      t.status==='imported'?'<span class="tc-badge badge-pending">📥 Imported</span>':
-      '<span class="tc-badge badge-pending">⏳ Pending</span>';
+    card.className='my-tc'+(t.status==='approved'?' approved':'');
     card.innerHTML=`<div class="tc-ico">${t.icon}</div>
-      <div class="tc-info">
-        <div class="tc-name">${t.name}</div>
-        <div class="tc-stat">DMG ${t.dmg} · Rng ${t.range} · $${t.cost}</div>
-        ${badge}
-      </div>
-      <button class="btn btn-gold btn-sm" onclick="copyTowerCode(${i})" title="Copy code">📋</button>
-      <button class="btn btn-red btn-sm" onclick="deleteTower(${i})" title="Delete">🗑</button>`;
-    // Activate in game
-    if(t.status==='approved'||t.status==='imported'){
-      const ab=document.createElement('button');
-      ab.className='btn btn-green btn-sm';ab.textContent='▶ Use';ab.title='Activate in Tower Rush 3D';
-      ab.onclick=(ev)=>{ev.stopPropagation();activateTower(t);};
-      card.appendChild(ab);
-    }
+      <div><div class="tc-name">${t.name}</div>
+      <div class="tc-stat">DMG ${t.dmg} · Rng ${t.range} · $${t.cost}</div>
+      ${badge}
+      <div class="tc-actions">
+        ${(t.status==='approved'||t.status==='imported')?`<button class="btn btn-green btn-sm" onclick="activateTower(${i})">▶ Use</button>`:''}
+        <button class="btn btn-gold btn-sm" onclick="cpCode(${i})">📋</button>
+        <button class="btn btn-red btn-sm" onclick="delTower(${i})">🗑</button>
+      </div></div>`;
     el.appendChild(card);
   });
 }
-
-function copyTowerCode(i){
-  const list=store.get('hub_my_towers',[]);
-  const code=towerToCode(list[i]);
-  navigator.clipboard.writeText(code).then(()=>toast('Code copied!'))
-    .catch(()=>{ prompt('Copy this code:',code); });
-}
-
-function deleteTower(i){
-  const list=store.get('hub_my_towers',[]);
-  list.splice(i,1); store.set('hub_my_towers',list);
-  renderMyTowers(); renderPlayer();
-}
-
-function activateTower(t){
+function cpCode(i){const list=store.get('hub_my_towers',[]);navigator.clipboard.writeText(towerToCode(list[i])).then(()=>toast('Code copied!')).catch(()=>prompt('Code:',towerToCode(list[i])));}
+function delTower(i){const list=store.get('hub_my_towers',[]);list.splice(i,1);store.set('hub_my_towers',list);renderMyTowers();renderPlayer();}
+function activateTower(i){
+  const list=store.get('hub_my_towers',[]);const t=list[i];
   const active=store.get('hub_active_towers',[]);
-  if(active.find(a=>a.id===t.id)){ toast(t.name+' is already active in the game!'); return; }
-  active.push(t); store.set('hub_active_towers',active);
-  toast(t.name+' activated! It will appear in Tower Rush 3D.');
+  if(active.find(a=>a.name===t.name&&a.author===t.author)){toast(t.name+' already active!');return;}
+  active.push(t);store.set('hub_active_towers',active);
+  toast(t.name+' activated in Tower Rush 3D!');
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// RENDER APPROVED GALLERY
-// ─────────────────────────────────────────────────────────────────────────────
 function renderApproved(){
   const el=document.getElementById('approvedList');
-  if(!APPROVED_TOWERS.length){
-    el.innerHTML='<div class="empty-msg">No approved towers yet. Be the first to submit!</div>';return;
-  }
+  if(!APPROVED_TOWERS.length){el.innerHTML='<div class="empty">No approved towers yet!</div>';return;}
   el.innerHTML='';
   APPROVED_TOWERS.forEach(t=>{
     const card=document.createElement('div');card.className='ap-card';
-    const typeLabel=t.aoe>0?'AOE Bomb':t.slow>0?'Freeze':'Basic';
     card.innerHTML=`<div class="ap-ico">${t.icon}</div>
-      <div class="ap-name">${t.name}</div>
-      <div class="ap-auth">by ${t.author}</div>
-      <div class="ap-stats">
-        💰 $${t.cost}<br>
-        ⚔️ DMG ${t.dmg} · Rng ${t.range}<br>
-        ⚡ ${t.rate.toFixed(1)}/s · ${typeLabel}
-        ${t.aoe>0?'<br>💥 AOE '+t.aoe:''}${t.slow>0?'<br>❄️ Slow '+t.slow+'s':''}
-      </div>
-      <div class="ap-actions">
-        <button class="btn btn-green btn-sm" onclick='activateTower(${JSON.stringify(t)})'>▶ Use in Game</button>
-      </div>`;
+      <div class="ap-name">${t.name}</div><div class="ap-auth">by ${t.author}</div>
+      <div class="ap-stats">💰 $${t.cost} · ⚔️ ${t.dmg} DMG<br>📡 Rng ${t.range} · ⚡ ${t.rate}/s${t.aoe?'<br>💥 AOE '+t.aoe:''}${t.slow?'<br>❄️ Slow '+t.slow+'s':''}</div>
+      <div class="ap-act"><button class="btn btn-green btn-sm" onclick='activateApproved(${JSON.stringify(t).replace(/'/g,"&#39;")})'>▶ Use in Game</button></div>`;
     el.appendChild(card);
   });
 }
+function activateApproved(t){
+  const active=store.get('hub_active_towers',[]);
+  if(active.find(a=>a.name===t.name)){toast(t.name+' already active!');return;}
+  active.push(t);store.set('hub_active_towers',active);
+  toast(t.name+' activated in Tower Rush 3D!');
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
-// TOAST
+// TOAST + STARS
 // ─────────────────────────────────────────────────────────────────────────────
 let toastT=null;
-function toast(msg){
-  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
-  if(toastT)clearTimeout(toastT);
-  toastT=setTimeout(()=>el.classList.remove('show'),2800);
-}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');if(toastT)clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),3000);}
 
-// ─────────────────────────────────────────────────────────────────────────────
-// STARS
-// ─────────────────────────────────────────────────────────────────────────────
 const sf=document.getElementById('stars');
-for(let i=0;i<150;i++){
-  const s=document.createElement('div');s.className='star';
-  const sz=Math.random()*2+0.5;
-  s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*5}s;animation-delay:${Math.random()*5}s;`;
-  sf.appendChild(s);
-}
+for(let i=0;i<130;i++){const s=document.createElement('div');s.className='star';const sz=Math.random()*2+0.5;s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*5}s;animation-delay:${Math.random()*5}s;`;sf.appendChild(s);}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // INIT
@@ -554,6 +713,7 @@ for(let i=0;i<150;i++){
 renderPlayer();
 renderMyTowers();
 renderApproved();
+initEditor();
 if(!player.name) openLogin();
 </script>
 </body>
