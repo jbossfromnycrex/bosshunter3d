@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Jasper's Game Hub</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  background:#0a0a12;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-family:'Segoe UI',sans-serif;
+  color:#fff;
+  overflow:hidden;
+}
+
+/* Animated star background */
+.stars{position:fixed;inset:0;z-index:0;overflow:hidden;}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twinkle linear infinite;}
+@keyframes twinkle{0%,100%{opacity:0.2}50%{opacity:1}}
+
+.content{position:relative;z-index:1;text-align:center;padding:24px 20px;}
+
+h1{
+  font-size:clamp(28px,6vw,54px);
+  letter-spacing:4px;
+  text-transform:uppercase;
+  background:linear-gradient(135deg,#ff8844,#ffcc00,#44ffcc,#4488ff);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:8px;
+}
+.sub{color:#666;font-size:15px;letter-spacing:2px;margin-bottom:48px;text-transform:uppercase;}
+
+.cards{
+  display:flex;
+  gap:28px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.card{
+  width:280px;
+  border-radius:18px;
+  border:2px solid #333;
+  background:#111118;
+  overflow:hidden;
+  cursor:pointer;
+  text-decoration:none;
+  color:#fff;
+  transition:transform .18s, border-color .18s, box-shadow .18s;
+  display:block;
+}
+.card:hover{
+  transform:translateY(-8px);
+  border-color:#aaa;
+  box-shadow:0 20px 50px rgba(0,0,0,0.6);
+}
+.card:hover .card-glow{opacity:1;}
+
+.card-banner{
+  height:160px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:72px;
+  position:relative;
+  overflow:hidden;
+}
+.card-glow{
+  position:absolute;inset:0;
+  opacity:0;transition:opacity .2s;
+  pointer-events:none;
+}
+.bh .card-banner{background:linear-gradient(135deg,#1a0800,#3a1000,#1a0800);}
+.bh .card-glow{background:radial-gradient(circle at 50% 50%,rgba(255,80,0,0.25),transparent 70%);}
+.bh:hover{border-color:#ff6600;box-shadow:0 20px 50px rgba(255,80,0,0.25);}
+
+.td .card-banner{background:linear-gradient(135deg,#001a08,#003318,#001a08);}
+.td .card-glow{background:radial-gradient(circle at 50% 50%,rgba(0,200,80,0.25),transparent 70%);}
+.td:hover{border-color:#00cc44;box-shadow:0 20px 50px rgba(0,200,80,0.2);}
+
+.card-body{padding:18px 20px 22px;}
+.card-title{font-size:20px;font-weight:bold;letter-spacing:1px;margin-bottom:6px;}
+.card-desc{font-size:13px;color:#888;line-height:1.5;}
+.card-tag{
+  display:inline-block;margin-top:12px;
+  padding:4px 12px;border-radius:20px;
+  font-size:11px;font-weight:bold;letter-spacing:1px;
+  text-transform:uppercase;
+}
+.bh .card-tag{background:rgba(255,80,0,0.15);color:#ff8844;border:1px solid rgba(255,80,0,0.3);}
+.td .card-tag{background:rgba(0,200,80,0.12);color:#44ff88;border:1px solid rgba(0,200,80,0.25);}
+
+.footer{
+  margin-top:52px;
+  color:#333;
+  font-size:12px;
+  letter-spacing:1px;
+}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+
+<div class="content">
+  <h1>Jasper's Games</h1>
+  <p class="sub">Choose your game</p>
+
+  <div class="cards">
+
+    <a class="card bh" href="index.html">
+      <div class="card-banner">
+        🐉
+        <div class="card-glow"></div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Boss Hunter 3D</div>
+        <div class="card-desc">Fight 4 epic bosses across volcanic, jungle, ice and sky worlds. 1–2 players, random world order every run.</div>
+        <span class="card-tag">Action · 1–2P</span>
+      </div>
+    </a>
+
+    <a class="card td" href="towerdefense.html">
+      <div class="card-banner">
+        🏰
+        <div class="card-glow"></div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Tower Rush 3D</div>
+        <div class="card-desc">Place towers, survive 15 waves of grunts, scouts, brutes and titans. Freeze, bomb and snipe your way to victory.</div>
+        <span class="card-tag">Strategy · 1P</span>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="footer">Made by Jasper &amp; P2</div>
+</div>
+
+<script>
+// Generate star field
+const starsEl=document.getElementById('stars');
+for(let i=0;i<180;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  const sz=Math.random()*2.5+0.5;
+  s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${2+Math.random()*5}s;animation-delay:${Math.random()*5}s;opacity:${Math.random()*0.5};`;
+  starsEl.appendChild(s);
+}
+</script>
+</body>
+</html>
