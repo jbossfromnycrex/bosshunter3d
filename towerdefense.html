@@ -43,6 +43,17 @@ canvas{display:block;margin-top:52px;}
 #overlayBox button:hover{background:#3a7abb;}
 #speedBtn{position:fixed;top:60px;right:130px;padding:9px 14px;font-size:13px;
   font-weight:bold;background:#333;color:#fff;border:none;border-radius:8px;cursor:pointer;z-index:10;}
+#camBtn{position:fixed;top:60px;right:240px;padding:9px 14px;font-size:13px;
+  font-weight:bold;background:#443366;color:#fff;border:none;border-radius:8px;cursor:pointer;z-index:10;}
+#camBtn:hover{background:#553388;}
+#crosshair{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:22px;height:22px;pointer-events:none;z-index:20;display:none;}
+#crosshair::before,#crosshair::after{content:'';position:absolute;background:rgba(255,255,255,0.85);}
+#crosshair::before{width:2px;height:100%;left:50%;transform:translateX(-50%);}
+#crosshair::after{height:2px;width:100%;top:50%;transform:translateY(-50%);}
+#fpsHint{position:fixed;bottom:96px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,0.72);color:#ccc;padding:6px 16px;border-radius:8px;
+  font-size:12px;z-index:10;display:none;pointer-events:none;text-align:center;}
 </style>
 </head>
 <body>
@@ -79,6 +90,9 @@ canvas{display:block;margin-top:52px;}
 
 <button id="waveBtn" onclick="startWave()">▶ Start Wave 1</button>
 <button id="speedBtn" onclick="toggleSpeed()">⏩ x1</button>
+<button id="camBtn"   onclick="toggleCam()">🚶 Walk View</button>
+<div id="crosshair"></div>
+<div id="fpsHint">Click canvas to capture mouse · WASD to walk · Click to place towers · V or Esc to exit</div>
 <a href="hub.html" style="position:fixed;top:60px;left:14px;padding:9px 16px;font-size:13px;font-weight:bold;background:#222;color:#aaa;border:1px solid #444;border-radius:8px;text-decoration:none;z-index:10;">🏠 Hub</a>
 <div id="infoBox"></div>
 
@@ -146,6 +160,12 @@ let waveActive=false,spawnQueue=[],spawnTimer=0;
 let gameOver=false,gameWon=false,gamePaused=false;
 let gameSpeed=1;
 const occupied=new Set();
+
+// FPS camera state
+let camMode='top';
+let fpsYaw=0, fpsPitch=-0.28;
+const fpsPos=new THREE.Vector3(0,1.8,16);
+const keys={};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // THREE.JS SETUP
@@ -397,6 +417,23 @@ function loop(){
   requestAnimationFrame(loop);
   const now=performance.now(), rawDt=(now-prev)/1000;prev=now;
   const dt=Math.min(rawDt,0.06)*gameSpeed;
+
+  // FPS camera movement (uses raw dt so game speed doesn't affect walking)
+  if(camMode==='fps'){
+    const s=10*Math.min(rawDt,0.05);
+    const fwd=new THREE.Vector3(-Math.sin(fpsYaw),0,-Math.cos(fpsYaw));
+    const rgt=new THREE.Vector3(Math.cos(fpsYaw),0,-Math.sin(fpsYaw));
+    if(keys['w']||keys['arrowup'])    fpsPos.addScaledVector(fwd,s);
+    if(keys['s']||keys['arrowdown'])  fpsPos.addScaledVector(fwd,-s);
+    if(keys['a']||keys['arrowleft'])  fpsPos.addScaledVector(rgt,-s);
+    if(keys['d']||keys['arrowright']) fpsPos.addScaledVector(rgt,s);
+    fpsPos.y=1.8;
+    cam.position.copy(fpsPos);
+    cam.rotation.order='YXZ';
+    cam.rotation.y=fpsYaw;
+    cam.rotation.x=fpsPitch;
+  }
+
   renderer.render(scene,cam);
   if(gameOver||gameWon||gamePaused)return;
 
@@ -512,6 +549,7 @@ function getGridCell(e){
 }
 
 renderer.domElement.addEventListener('mousemove',e=>{
+  if(camMode==='fps'){hoverMesh.visible=false;return;}
   const cell=getGridCell(e);
   if(!cell){hoverMesh.visible=false;return;}
   const x=OX+(cell.col+0.5)*CELL, z=OZ+(cell.row+0.5)*CELL;
@@ -536,8 +574,41 @@ renderer.domElement.addEventListener('mousemove',e=>{
 
 renderer.domElement.addEventListener('mouseleave',()=>{hoverMesh.visible=false;rangeRing.visible=false;});
 
+// FPS mouse look via pointer lock
+document.addEventListener('mousemove',e=>{
+  if(camMode==='fps'&&document.pointerLockElement===renderer.domElement){
+    fpsYaw   -=e.movementX*0.0022;
+    fpsPitch  =Math.max(-0.75,Math.min(0.4,fpsPitch-e.movementY*0.0022));
+  }
+});
+document.addEventListener('pointerlockchange',()=>{
+  if(document.pointerLockElement!==renderer.domElement&&camMode==='fps'){
+    document.getElementById('fpsHint').textContent=
+      'Click canvas to capture mouse · WASD to walk · Click to place towers · V or Esc to exit';
+    document.getElementById('fpsHint').style.display='block';
+  }
+});
+
 renderer.domElement.addEventListener('click',e=>{
-  const cell=getGridCell(e);
+  // FPS mode: grab pointer lock first if not already locked
+  if(camMode==='fps'&&document.pointerLockElement!==renderer.domElement){
+    renderer.domElement.requestPointerLock();
+    return;
+  }
+
+  // Determine grid cell — center screen for FPS, mouse pos for top-down
+  let cell=null;
+  if(camMode==='fps'){
+    mPos.set(0,0);
+    ray.setFromCamera(mPos,cam);
+    if(ray.ray.intersectPlane(groundPlane,hitPt)){
+      const col=Math.floor((hitPt.x-OX)/CELL);
+      const row=Math.floor((hitPt.z-OZ)/CELL);
+      if(col>=0&&col<COLS&&row>=0&&row<ROWS) cell={col,row,key:`${col},${row}`};
+    }
+  } else {
+    cell=getGridCell(e);
+  }
 
   // Check if clicking an existing tower
   ray.setFromCamera(mPos,cam);
@@ -588,6 +659,28 @@ function toggleSpeed(){
   document.getElementById('speedBtn').textContent='⏩ x'+gameSpeed;
 }
 
+function toggleCam(){
+  if(camMode==='top'){
+    camMode='fps';
+    fpsPos.set(cam.position.x,1.8,cam.position.z+8); // start near current view
+    fpsYaw=0; fpsPitch=-0.18;
+    document.getElementById('camBtn').textContent='📷 Top View';
+    document.getElementById('crosshair').style.display='block';
+    document.getElementById('fpsHint').style.display='block';
+    hoverMesh.visible=false; rangeRing.visible=false;
+    renderer.domElement.style.cursor='none';
+  } else {
+    camMode='top';
+    if(document.pointerLockElement===renderer.domElement) document.exitPointerLock();
+    cam.position.set(0,46,22); cam.lookAt(0,0,-4);
+    cam.rotation.order='XYZ';
+    document.getElementById('camBtn').textContent='🚶 Walk View';
+    document.getElementById('crosshair').style.display='none';
+    document.getElementById('fpsHint').style.display='none';
+    renderer.domElement.style.cursor='default';
+  }
+}
+
 function endGame(won){
   if(won){gameWon=true;showOverlay('🏆 YOU WIN!','All '+WAVES.length+' waves defeated! Kills: '+kills);}
   else{gameOver=true;showOverlay('💀 GAME OVER','You reached Wave '+waveNum+'. Kills: '+kills);}
@@ -609,7 +702,13 @@ window.addEventListener('resize',()=>{
 });
 
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')clearSelection();
+  keys[e.key.toLowerCase()]=true;
+  if(e.key==='v'||e.key==='V'){toggleCam();return;}
+  if(e.key==='Escape'){
+    if(camMode==='fps'&&document.pointerLockElement===renderer.domElement){document.exitPointerLock();return;}
+    clearSelection();return;
+  }
+  if(camMode==='fps')return; // block tower hotkeys while walking (WASD conflicts)
   if(e.key==='1')selectType('basic');
   if(e.key==='2')selectType('rapid');
   if(e.key==='3')selectType('sniper');
@@ -617,8 +716,42 @@ document.addEventListener('keydown',e=>{
   if(e.key==='5')selectType('freeze');
   if(e.key===' '){e.preventDefault();startWave();}
 });
+document.addEventListener('keyup',e=>{ delete keys[e.key.toLowerCase()]; });
 
 document.getElementById('sMaxWave').textContent=WAVES.length;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COMMUNITY TOWERS — loaded from hub localStorage
+// ─────────────────────────────────────────────────────────────────────────────
+function loadCommunityTowers(){
+  let active=[];
+  try{active=JSON.parse(localStorage.getItem('hub_active_towers')||'[]');}catch{}
+  if(!active.length)return;
+
+  const toolbar=document.getElementById('toolbar');
+  const divider=document.createElement('div');
+  divider.style.cssText='width:100%;text-align:center;font-size:10px;color:#444;letter-spacing:2px;margin:0 8px;white-space:nowrap;';
+  divider.textContent='── COMMUNITY ──';
+  toolbar.insertBefore(divider,toolbar.firstChild);
+
+  active.forEach(t=>{
+    // Register in TOWER_DEFS so placeTower can find it
+    TOWER_DEFS[t.id]={
+      name:t.name,cost:t.cost,range:t.range,dmg:t.dmg,rate:t.rate,spd:18,
+      col:parseInt(t.color.replace('#',''),16),
+      col2:parseInt(t.col2.replace('#',''),16),
+      aoe:t.aoe||0,slow:t.slow||0
+    };
+    // Add button to toolbar
+    const btn=document.createElement('div');
+    btn.className='tbtn';btn.id='btn_'+t.id;
+    btn.innerHTML=`<span class="ico">${t.icon}</span><div>${t.name}</div><div class="cost">$${t.cost}</div><div class="rng">✨</div>`;
+    btn.onclick=()=>selectType(t.id);
+    toolbar.insertBefore(btn,divider.nextSibling);
+  });
+}
+loadCommunityTowers();
+
 updateHUD();
 loop();
 </script>

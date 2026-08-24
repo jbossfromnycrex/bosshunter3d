@@ -113,6 +113,8 @@ h1.title { font-size:52px; letter-spacing:8px; color:#ff6600; text-shadow:0 0 20
   <button class="btn3d" style="margin-top:20px" onclick="beginGame()">START</button>
 </div>
 
+<a href="hub.html" style="position:fixed;top:10px;left:14px;padding:7px 14px;font-size:13px;font-weight:bold;background:rgba(0,0,0,0.6);color:#aaa;border:1px solid #444;border-radius:8px;text-decoration:none;z-index:200;pointer-events:all;">🏠 Hub</a>
+
 <!-- HUD -->
 <div id="hud">
   <div id="p1bar"><div class="pLabel">P1</div><div class="hearts" id="p1hearts"></div></div>
@@ -243,15 +245,25 @@ function makeWall(x,y,z,w,h,d,color=0x551111) {
   const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), new THREE.MeshLambertMaterial({color}));
   m.position.set(x,y,z); m.receiveShadow = true; scene.add(m); walls.push(m); return m;
 }
+// Shared sphere geometry cache — bullets/trails reuse the same geometry object
+const _sphereGeoCache={};
+function _getSphereGeo(r){
+  const k=Math.round(r*100);
+  return _sphereGeoCache[k]||(_sphereGeoCache[k]=new THREE.SphereGeometry(r,8,6));
+}
 function mkSphere(r,color,emissive=0) {
-  return new THREE.Mesh(new THREE.SphereGeometry(r,12,8), new THREE.MeshLambertMaterial({color,emissive}));
+  return new THREE.Mesh(_getSphereGeo(r), new THREE.MeshLambertMaterial({color,emissive}));
 }
 function mkBox(w,h,d,color,emissive=0) {
   return new THREE.Mesh(new THREE.BoxGeometry(w,h,d), new THREE.MeshLambertMaterial({color,emissive}));
 }
 
 // ── CANVAS TEXTURES ───────────────────────────────────────────────────────────
+// ── TEXTURE CACHE — each texture built once, reused forever ──────────────────
+const _TEX = {};
+
 function makeLavaTex(){
+  if(_TEX.lava) return _TEX.lava;
   const c=document.createElement('canvas');c.width=c.height=256;
   const ctx=c.getContext('2d');
   ctx.fillStyle='#080808';ctx.fillRect(0,0,256,256);
@@ -263,9 +275,11 @@ function makeLavaTex(){
     ctx.strokeStyle=`rgba(255,${Math.floor(55+br*90)},0,${br})`;ctx.lineWidth=1+Math.random()*2.5;ctx.stroke();
     ctx.strokeStyle=`rgba(255,90,0,0.18)`;ctx.lineWidth=7+Math.random()*5;ctx.stroke();
   }
-  return new THREE.CanvasTexture(c);
+  return (_TEX.lava=new THREE.CanvasTexture(c));
 }
 function makeScaleTex(r,g,b){
+  const key=`scale_${r}_${g}_${b}`;
+  if(_TEX[key]) return _TEX[key];
   const c=document.createElement('canvas');c.width=c.height=256;
   const ctx=c.getContext('2d');
   ctx.fillStyle=`rgb(${r},${g},${b})`;ctx.fillRect(0,0,256,256);
@@ -276,9 +290,10 @@ function makeScaleTex(r,g,b){
     ctx.fillStyle=`rgba(${Math.max(0,r-38)},${Math.max(0,g-38)},${Math.max(0,b-38)},0.7)`;ctx.fill();
     ctx.strokeStyle=`rgba(${Math.min(255,r+55)},${Math.min(255,g+55)},${Math.min(255,b+55)},0.35)`;ctx.lineWidth=0.7;ctx.stroke();
   }}
-  return new THREE.CanvasTexture(c);
+  return (_TEX[key]=new THREE.CanvasTexture(c));
 }
 function makeStoneTex(){
+  if(_TEX.stone) return _TEX.stone;
   const c=document.createElement('canvas');c.width=c.height=256;
   const ctx=c.getContext('2d');
   ctx.fillStyle='#393942';ctx.fillRect(0,0,256,256);
@@ -290,7 +305,7 @@ function makeStoneTex(){
     ctx.strokeStyle=`rgba(255,${58+Math.floor(Math.random()*65)},0,0.88)`;ctx.lineWidth=1+Math.random()*1.8;ctx.stroke();
   }
   ctx.shadowBlur=0;
-  return new THREE.CanvasTexture(c);
+  return (_TEX.stone=new THREE.CanvasTexture(c));
 }
 
 // ── BOSS AUDIO ────────────────────────────────────────────────────────────────
@@ -377,6 +392,7 @@ function makeChitinTex(r,g,b){
 // ── STORM TEXTURES ───────────────────────────────────────────────────────────
 // White/silver pearl scales with electric blue veins — matches the white dragon
 function makeStormScaleTex(){
+  if(_TEX.storm) return _TEX.storm;
   const c=document.createElement('canvas');c.width=c.height=256;
   const ctx=c.getContext('2d');
   ctx.fillStyle='#a8b8d0';ctx.fillRect(0,0,256,256);
@@ -396,10 +412,11 @@ function makeStormScaleTex(){
     for(let j=0;j<5;j++){lx+=(-30+Math.random()*60);ly+=(-30+Math.random()*60);ctx.lineTo(lx,ly);}
     ctx.stroke();
   }
-  return new THREE.CanvasTexture(c);
+  return (_TEX.storm=new THREE.CanvasTexture(c));
 }
 // Purple/lavender sky-land clouds
 function makeCloudTex(){
+  if(_TEX.cloud) return _TEX.cloud;
   const c=document.createElement('canvas');c.width=c.height=256;
   const ctx=c.getContext('2d');
   ctx.fillStyle='#1e1430';ctx.fillRect(0,0,256,256);
@@ -417,11 +434,12 @@ function makeCloudTex(){
     for(let j=0;j<4;j++){lx+=(-40+Math.random()*80);ly+=(-40+Math.random()*80);ctx.lineTo(lx,ly);}
     ctx.stroke();
   }
-  return new THREE.CanvasTexture(c);
+  return (_TEX.cloud=new THREE.CanvasTexture(c));
 }
 
 // Blue-purple hexagonal ice scales with white crystal veining — Glacius
 function makeIceScaleTex(){
+  if(_TEX.ice) return _TEX.ice;
   const c=document.createElement('canvas');c.width=c.height=256;
   const ctx=c.getContext('2d');
   ctx.fillStyle='#080e22';ctx.fillRect(0,0,256,256);
@@ -440,7 +458,7 @@ function makeIceScaleTex(){
     for(let j=0;j<5;j++){lx+=(-28+Math.random()*56);ly+=(-28+Math.random()*56);ctx.lineTo(lx,ly);}
     ctx.stroke();
   }
-  return new THREE.CanvasTexture(c);
+  return (_TEX.ice=new THREE.CanvasTexture(c));
 }
 
 // ── SKY DOME ─────────────────────────────────────────────────────────────────
@@ -473,12 +491,15 @@ function buildLevel1(){
   [-9.5,9.5].forEach(sx=>{
     const ch=mkBox(1.8,0.09,LEN,0xff3300,0xff1100);ch.position.set(sx,0.04,-LEN/2);scene.add(ch);lavaPools.push(ch);
   });
-  // Dense floor crack network
+  // Dense floor crack network — emissive material provides glow, no per-crack lights needed
   for(let i=0;i<36;i++){
     const cr=mkBox(0.4+Math.random()*4.5,0.06,0.2+Math.random()*1.2,0xff3300,0xff2200);
     cr.position.set(-9+Math.random()*18,0.03,-4-i*5.8-Math.random()*4);cr.rotation.y=Math.random()*Math.PI;scene.add(cr);
-    if(Math.random()<0.65){const pl=new THREE.PointLight(0xff5500,1.1,6);pl.position.set(cr.position.x,0.5,cr.position.z);scene.add(pl);}
   }
+  // A few area fill lights spread down the length of the level
+  [-40,-100,-165].forEach(z=>{
+    const fl=new THREE.PointLight(0xff4400,1.5,38);fl.position.set(0,1.5,z);scene.add(fl);
+  });
 
   // LAVA PILLAR-TREES — the massive glowing orange columns from the reference image
   [-22,-50,-80,-112,-145,-178].forEach((pz,pi)=>{
@@ -493,9 +514,8 @@ function buildLevel1(){
       const core=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.45,ph+0.5,6),
         new THREE.MeshLambertMaterial({color:0xff4400,emissive:new THREE.Color(0xff2200),emissiveIntensity:1.4}));
       core.position.set(px,ph/2,pz);scene.add(core);
-      // Orange glow light — key atmospheric feature
-      const pl=new THREE.PointLight(0xff5500,5.0,20);pl.position.set(px,ph*0.55,pz);scene.add(pl);
-      const basePl=new THREE.PointLight(0xff3300,2.2,10);basePl.position.set(px,0.8,pz);scene.add(basePl);
+      // One light per pillar — mid-height covers both glow and base
+      const pl=new THREE.PointLight(0xff5500,5.5,24);pl.position.set(px,ph*0.4,pz);scene.add(pl);
       // Rock sphere clusters at base
       for(let r=0;r<4;r++){
         const ang=r/4*Math.PI*2+Math.random()*0.4;
@@ -553,12 +573,14 @@ function buildBossArena(){
   const dl=new THREE.DirectionalLight(0xff5500,0.72);dl.position.set(0,32,5);scene.add(dl);
 
   makePlatform(0,-0.5,-28, 48,1,62, 0x0e0400);
-  // Dense lava crack floor
+  // Dense lava crack floor — emissive material glows without per-crack lights
   for(let i=0;i<24;i++){
     const cr=mkBox(0.4+Math.random()*5,0.06,0.2+Math.random()*1.4,0xff3300,0xff2200);
     cr.position.set(-20+Math.random()*40,0.03,-2-Math.random()*54);cr.rotation.y=Math.random()*Math.PI;scene.add(cr);
-    if(Math.random()<0.62){const pl=new THREE.PointLight(0xff4400,1.0,7);pl.position.set(cr.position.x,0.5,cr.position.z);scene.add(pl);}
   }
+  // Two fill lights cover the whole arena floor
+  const fl1=new THREE.PointLight(0xff4400,1.8,50);fl1.position.set(-8,1,-28);scene.add(fl1);
+  const fl2=new THREE.PointLight(0xff4400,1.8,50);fl2.position.set(8,1,-28);scene.add(fl2);
 
   // MASSIVE lava waterfall at back — hero backdrop
   const wf=new THREE.Mesh(new THREE.CylinderGeometry(4,6,22,10),
@@ -580,7 +602,7 @@ function buildBossArena(){
     const core=new THREE.Mesh(new THREE.CylinderGeometry(0.38,0.58,ph+0.5,6),
       new THREE.MeshLambertMaterial({color:0xff4400,emissive:new THREE.Color(0xff2200),emissiveIntensity:1.4}));
     core.position.set(px,ph/2,pz);scene.add(core);
-    const pl=new THREE.PointLight(0xff5500,5.5,22);pl.position.set(px,ph*0.6,pz);scene.add(pl);
+    const pl=new THREE.PointLight(0xff5500,6.0,26);pl.position.set(px,ph*0.4,pz);scene.add(pl);
     for(let r=0;r<3;r++){
       const ang=r/3*Math.PI*2;
       const rb=new THREE.Mesh(new THREE.SphereGeometry(0.85+Math.random()*0.7,7,6),
@@ -613,8 +635,6 @@ function buildBossArena(){
 
 // ── LEVEL 2: TROPICAL RAINFOREST ──────────────────────────────────────────────
 function buildLevel2(){
-  clearLevel();
-  levelIndex=1;
   scene.fog=new THREE.Fog(0x0a2005,32,135);
   scene.background=new THREE.Color(0x081504);
   addSkyDome(0x0e2a06,0x226610,0x0a1e04,0.48);
@@ -3468,16 +3488,28 @@ function showLevelTitle(txt){
 }
 
 // ── CLEAR / VICTORY ────────────────────────────────────────────────────────────
+function _disposeNode(node){
+  // Recursively free geometry + material from the GPU — does NOT dispose textures
+  // (textures live in _TEX cache and are reused across levels)
+  node.traverse(o=>{
+    if(o.geometry) o.geometry.dispose();
+    if(o.material){
+      const mats=Array.isArray(o.material)?o.material:[o.material];
+      mats.forEach(m=>m.dispose());
+    }
+  });
+}
 function clearLevel(){
-  enemies.forEach(e=>{if(e.mesh)scene.remove(e.mesh);if(e.light)scene.remove(e.light);}); enemies.length=0;
-  bullets.forEach(b=>scene.remove(b.mesh)); bullets.length=0;
-  platforms.forEach(p=>scene.remove(p)); platforms.length=0;
-  walls.forEach(w=>scene.remove(w)); walls.length=0;
-  particles.forEach(p=>scene.remove(p.mesh)); particles.length=0;
+  enemies.forEach(e=>{if(e.mesh){_disposeNode(e.mesh);scene.remove(e.mesh);}if(e.light)scene.remove(e.light);}); enemies.length=0;
+  bullets.forEach(b=>{if(b.mesh){_disposeNode(b.mesh);scene.remove(b.mesh);}}); bullets.length=0;
+  platforms.forEach(p=>{_disposeNode(p);scene.remove(p);}); platforms.length=0;
+  walls.forEach(w=>{_disposeNode(w);scene.remove(w);}); walls.length=0;
+  particles.forEach(p=>{if(p.mesh){_disposeNode(p.mesh);scene.remove(p.mesh);}}); particles.length=0;
   lavaPools.length=0;
   players.forEach(p=>{if(p.mesh){scene.remove(p.mesh);p.mesh=null;}});
-  if(boss){if(boss.mesh)scene.remove(boss.mesh);if(boss.light)scene.remove(boss.light);boss=null;}
-  const rem=[]; scene.traverse(o=>{if(o.parent===scene)rem.push(o);}); rem.forEach(o=>scene.remove(o));
+  if(boss){if(boss.mesh){_disposeNode(boss.mesh);scene.remove(boss.mesh);}if(boss.light)scene.remove(boss.light);boss=null;}
+  const rem=[]; scene.traverse(o=>{if(o.parent===scene)rem.push(o);});
+  rem.forEach(o=>{_disposeNode(o);scene.remove(o);});
   document.getElementById('bossBar').style.display='none';
 }
 
